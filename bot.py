@@ -24,7 +24,8 @@ class Orbyt(commands.AutoShardedBot):
             intents=discord.Intents.all(),
             owner_ids={767115163127906334},
             activity=discord.Activity(
-                type=discord.ActivityType.listening, name="pop music! v0.1.0 /ping"
+                type=discord.ActivityType.listening,
+                name="pop music! v0.1.0 /ping",
             ),
             status="idle",
             *args,
@@ -35,10 +36,10 @@ class Orbyt(commands.AutoShardedBot):
         """Set up logger for both logging and console"""
         logger = logging.getLogger("discord")
         logger.setLevel(logging.DEBUG)
-        _fmt = "[{levelname}] [{asctime}] {name}: {message}"
-        _date_fmt = "%d %b %Y %H:%M:%S"
+        fmt = "[{levelname}] [{asctime}] {name}: {message}"
+        date_fmt = "%d %b %Y %H:%M:%S"
         # Log to file
-        f_formatter = logging.Formatter(_fmt, _date_fmt, "{")
+        f_formatter = logging.Formatter(fmt, date_fmt, "{")
 
         file_handler = logging.FileHandler(
             "./logs/discord.log", mode="w", encoding="utf-8"
@@ -47,7 +48,7 @@ class Orbyt(commands.AutoShardedBot):
         file_handler.setFormatter(f_formatter)
 
         # Log to console
-        c_formatter = CustomFormatter(_fmt, _date_fmt, "{")
+        c_formatter = CustomFormatter(fmt, date_fmt, "{")
 
         console_handler = logging.StreamHandler()
         console_handler.setLevel(logging.INFO)
@@ -63,7 +64,7 @@ class Orbyt(commands.AutoShardedBot):
         for ext in EXTENSIONS:
             try:
                 await self.load_extension(ext)
-            except Exception as exc:
+            except commands.ExtensionError as exc:
                 print(colored(f"Failed to load extension {ext}: {exc}", "red"))
             else:
                 loaded_exts.append(ext)

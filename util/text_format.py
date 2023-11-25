@@ -13,7 +13,7 @@ import logging
 from termcolor import colored
 
 
-def spaced_padding(text, width=50, padding="-"):
+def spaced_padding(text, width=50, padding="-") -> str:
     """
     Formats the given `text` by adding padding on both sides.
 
@@ -26,19 +26,31 @@ def spaced_padding(text, width=50, padding="-"):
         str: The formatted text with padding on both sides.
     """
     text_length = len(text)
-    total_padding = width - text_length - 2  # Subtract 2 for the spaces around the word
+    total_padding = width - text_length - 2
     left_padding = total_padding // 2
     right_padding = total_padding - left_padding
 
-    formatted_text = f"{padding * left_padding} {text} {padding * right_padding}"
-    return formatted_text
+    f_tx = f"{padding * left_padding} {text} {padding * right_padding}"
+    return f_tx
 
 
 class CustomFormatter(logging.Formatter):
+    """Formatter for console logging"""
+
     def __init__(self, _fmt, _dt_fmt, _style, *args, **kwargs):
+        """
+        Initializes a new instance of the class.
+
+        Args:
+            _fmt (str): The format string for the log message.
+            _dt_fmt (str): The format string for the log timestamp.
+            _style (str): The log style.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        """
         super().__init__(_fmt, _dt_fmt, _style, *args, **kwargs)
 
-        self.FORMATS = {
+        self.formats = {
             logging.DEBUG: colored(_fmt, "dark_grey"),
             logging.INFO: colored(_fmt, "green"),
             logging.WARNING: colored(_fmt, "yellow"),
@@ -49,6 +61,6 @@ class CustomFormatter(logging.Formatter):
         self.style = _style
 
     def format(self, record):
-        log_fmt = self.FORMATS.get(record.levelno)
+        log_fmt = self.formats.get(record.levelno)
         formatter = logging.Formatter(log_fmt, self.datefmt, self.style)
         return formatter.format(record)

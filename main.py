@@ -13,7 +13,6 @@ Author:
 
 Repository:
     https://github.com/nxrmqlly/Orbyt
-
 """
 
 __copyright__ = "Copyright (C) 2023 Ritam Das"
@@ -35,7 +34,7 @@ async def _run():
     """
     Runs the function asynchronously to start the bot.
 
-    This function is an async function that starts the Orbyt bot by creating an instance of the Orbyt class and using it as a context manager.
+    Async function that starts the Bot.
     The bot is started by calling the `start` method of the bot instance.
     """
     async with Orbyt() as bot:
@@ -44,7 +43,7 @@ async def _run():
 
 if __name__ == "__main__":
     os.system("cls" if os.name == "nt" else "clear")
-    _title = """                                                
+    TITLE = """
   .oooooo.             .o8                       .   
  d8P'  `Y8b           "888                     .o8   
 888      888 oooo d8b  888oooo.  oooo    ooo .o888oo      By Nxrmqlly
@@ -57,7 +56,7 @@ if __name__ == "__main__":
 """
     print(
         colored(
-            _title,
+            TITLE,
             color="light_magenta",
         )
     )
