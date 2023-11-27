@@ -4,6 +4,7 @@ import logging
 from sys import version
 
 import discord
+import jishaku
 from discord.ext import commands
 from termcolor import colored
 
@@ -18,7 +19,7 @@ class Orbyt(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
         """Initialise the class from `super()`"""
         super().__init__(
-            command_prefix=commands.when_mentioned_or("o?"),
+            command_prefix=commands.when_mentioned_or("orbyt ", "Orbyt "),
             case_insensitive=True,
             strip_after_prefix=True,
             intents=discord.Intents.all(),
@@ -33,10 +34,10 @@ class Orbyt(commands.AutoShardedBot):
         )
 
     async def setup_hook(self):
-        """Set up logger for both logging and console"""
+        """Set up logger and load extensions"""
         logger = logging.getLogger("discord")
         logger.setLevel(logging.DEBUG)
-        fmt = "[{levelname}] [{asctime}] {name}: {message}"
+        fmt = "[{asctime}] [{levelname}] - {name}: {message}"
         date_fmt = "%d %b %Y %H:%M:%S"
         # Log to file
         f_formatter = logging.Formatter(fmt, date_fmt, "{")
@@ -85,10 +86,11 @@ class Orbyt(commands.AutoShardedBot):
         basic_info = [
             f"{tag:<12}: {value}"
             for tag, value in [
-                ("User", self.user.name),
+                ("User", self.user),
                 ("ID", self.user.id),
                 ("Python", version),
                 ("Discord.py", discord.__version__),
+                ("Jishaku", jishaku.__version__),
                 ("Guilds", len(self.guilds)),
                 ("Shards", self.shard_count),
                 ("Debug Mode", DEBUG),
@@ -96,11 +98,12 @@ class Orbyt(commands.AutoShardedBot):
         ]
         print(
             colored(
-                spaced_padding("Logged In", 52)
+                "\n"
+                + spaced_padding("Logged In", 52)
                 + "\n| > "
                 + "\n| > ".join(basic_info)
                 + "\n",
-                "blue",
+                "cyan",
             )
         )
 

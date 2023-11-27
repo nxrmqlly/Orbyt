@@ -3,3 +3,5 @@
 logs/*
 config.py
 *.dev.py
+__pycache__/
+*.pyc

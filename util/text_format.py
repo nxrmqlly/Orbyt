@@ -14,16 +14,21 @@ from termcolor import colored
 
 
 def spaced_padding(text, width=50, padding="-") -> str:
-    """
-    Formats the given `text` by adding padding on both sides.
+    """Formats the given `text` by adding padding on both sides.
 
-    Parameters:
-        text (str): The text to be formatted.
-        width (int): The total width of the formatted text. Default is 50.
-        padding (str): The character used for padding. Default is "-".
+    Parameters
+    ----------
+    text : str
+        The text to format.
+    width : int
+        total width of the text (Default value = 50)
+    padding : str
+        padding character (Default value = "-")
 
-    Returns:
-        str: The formatted text with padding on both sides.
+    Returns
+    -------
+
+
     """
     text_length = len(text)
     total_padding = width - text_length - 2
@@ -41,7 +46,7 @@ class CustomFormatter(logging.Formatter):
         """
         Initializes a new instance of the class.
 
-        Args:
+        Parameters:
             _fmt (str): The format string for the log message.
             _dt_fmt (str): The format string for the log timestamp.
             _style (str): The log style.
@@ -61,6 +66,18 @@ class CustomFormatter(logging.Formatter):
         self.style = _style
 
     def format(self, record):
+        """
+
+        Parameters
+        ----------
+        record :
+
+
+        Returns
+        -------
+
+
+        """
         log_fmt = self.formats.get(record.levelno)
         formatter = logging.Formatter(log_fmt, self.datefmt, self.style)
         return formatter.format(record)
