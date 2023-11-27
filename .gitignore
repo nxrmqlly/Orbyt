@@ -1,6 +1,6 @@
 .git/
 .venv/
-logs/*
+*.log
 config.py
 *.dev.py
 __pycache__/
