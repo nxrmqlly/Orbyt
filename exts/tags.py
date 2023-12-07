@@ -111,7 +111,16 @@ class Tags(commands.GroupCog, name="tag"):
         name: str,
         raw: bool = False,
     ):
-        """View a tag"""
+        """View a tag
+
+        Parameters
+        -----------
+
+        name: str
+            The name of the tag
+        raw: Optional[bool]
+            Whether to display the content of the tag without markdown
+        """
 
         async with self.bot.pool.acquire() as c:
             data = await c.fetchone(
@@ -135,7 +144,13 @@ class Tags(commands.GroupCog, name="tag"):
 
     @app_commands.command(name="remove")
     async def remove(self, interaction: discord.Interaction, name: str):
-        """Remove a tag from the server"""
+        """Remove a tag from the server
+
+        Parameters
+        -----------
+        name: str
+            The name of the tag
+        """
 
         # check if user has manage_guild or manage_messages permssion or is bot owner
         author_bypass = (

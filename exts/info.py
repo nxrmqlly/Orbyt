@@ -13,7 +13,7 @@ from .util.constants import EMOJIS
 
 
 class Info(commands.Cog):
-    """Commands that give out information (smh)"""
+    """Commands that give out information about a object"""
 
     def __init__(self, bot: Orbyt):
         self.bot: Orbyt = bot
@@ -108,8 +108,11 @@ class Info(commands.Cog):
     ):
         """Returns information about the user
 
-        Args:
-            user (discord.Member): The user to get information about
+        Parameters
+        -----------
+
+            user: discord.Member:
+                The user to get information about
         """
 
         # TODO: Make more features LOL

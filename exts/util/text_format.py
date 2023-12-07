@@ -8,7 +8,23 @@ from termcolor import colored
 
 
 def spaced_padding(text, width=50, padding="-") -> str:
-    """Formats the given `text` by adding padding on both sides."""
+    """
+    Formats the given `text` by adding padding on both sides.
+
+    Parameters
+    -----------
+    text: :class:`str`
+        The text to format.
+    width: :class:`int`
+        The width of the text.
+    padding: :class:`str`
+        The padding to use.
+
+    Returns
+    --------
+    :class:`str`
+        The formatted text.
+    """
     text_length = len(text)
     total_padding = width - text_length - 2
     left_padding = total_padding // 2
@@ -19,7 +35,20 @@ def spaced_padding(text, width=50, padding="-") -> str:
 
 
 class CustomFormatter(logging.Formatter):
-    """Formatter for console logging"""
+    """
+    Formatter for console logging
+
+    Parameters
+    -----------
+    _fmt: :class:`str`
+        The format
+
+    _dt_fmt: :class:`str`
+        The date format
+
+    _style: :class:`str`
+        The style
+    """
 
     def __init__(self, _fmt, _dt_fmt, _style, *args, **kwargs):
         super().__init__(_fmt, _dt_fmt, _style, *args, **kwargs)
@@ -36,16 +65,13 @@ class CustomFormatter(logging.Formatter):
 
     def format(self, record):
         """
+        Format the stream
 
         Parameters
-        ----------
-        record :
+        -----------
 
-
-        Returns
-        -------
-
-
+        record: :class:`logging.LogRecord`
+            The log record
         """
         log_fmt = self.formats.get(record.levelno)
         formatter = logging.Formatter(log_fmt, self.datefmt, self.style)

@@ -18,6 +18,23 @@ BotT = TypeVar("BotT", bound="commands.Bot")
 
 
 class CustomPaginator(Generic[T, BotT], BaseView, abc.ABC):
+    """
+    Pagination based on given list
+
+    Parameters
+    -----------
+    entries: `List[T]`
+        The list of entries
+    per_page: :class:`int`
+        The number of entries per page
+    clamp_pages: :class:`bool`
+        Whether to clamp the pages
+    target
+        The target
+    timeout: :class:`int`
+        The timeout
+    """
+
     def __init__(
         self,
         *,
@@ -68,6 +85,7 @@ class CustomPaginator(Generic[T, BotT], BaseView, abc.ABC):
 
     @abc.abstractmethod
     def format_page(self, entries: List[T], /) -> discord.Embed:
+        """Formatting provided for embed for current page"""
         raise NotImplementedError("Must be implemented")
 
     async def embed(self) -> discord.Embed:

@@ -24,7 +24,6 @@ class Orbyt(commands.AutoShardedBot):
     """Base Class for the bot"""
 
     def __init__(self, *args, **kwargs):
-        """Initialise the class from `super()`"""
         super().__init__(
             command_prefix=commands.when_mentioned_or("o?"),
             case_insensitive=True,

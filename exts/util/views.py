@@ -11,6 +11,17 @@ BotT = TypeVar("BotT", bound="commands.Bot")
 
 
 class BaseView(discord.ui.View):
+    """
+    Base View for other views.
+
+    Parameters
+    -----------
+    timeout: :class:`int`
+        Timeout in seconds
+    target
+        The target to use
+    """
+
     def __init__(
         self,
         *,
@@ -69,6 +80,21 @@ class BaseView(discord.ui.View):
 
 
 class ConfirmView(BaseView):
+    """
+    View for confirming or denying a request.
+
+    Parameters
+    -----------
+    timeout: :class:`int`
+        Timeout in seconds
+    confirm_msg: :class:`str`
+        The message to edit to when confirming
+    deny_msg: :class:`str`
+        The message to edit to when denying
+    target
+        The target to use
+    """
+
     def __init__(
         self,
         timeout=180,
