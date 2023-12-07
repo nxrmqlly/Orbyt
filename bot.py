@@ -7,10 +7,17 @@ import discord
 import jishaku
 from discord.ext import commands
 from termcolor import colored
+import asqlite
 
-from util.text_format import spaced_padding, CustomFormatter
-from config import DEBUG, DISCORD_TOKEN, DEBUG_BOT_TOKEN
-from exts import EXTENSIONS
+from exts.util.text_format import spaced_padding, CustomFormatter
+from config import DEBUG, PROD_TOKEN, DEBUG_BOT_TOKEN
+
+
+INITIAL_EXTENSIONS = [
+    "exts.info",
+    "exts.dev",
+    "exts.tags",
+]
 
 
 class Orbyt(commands.AutoShardedBot):
@@ -19,26 +26,33 @@ class Orbyt(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
         """Initialise the class from `super()`"""
         super().__init__(
-            command_prefix=commands.when_mentioned_or("orbyt ", "Orbyt "),
+            command_prefix=commands.when_mentioned_or("o?"),
             case_insensitive=True,
             strip_after_prefix=True,
             intents=discord.Intents.all(),
-            owner_ids={767115163127906334},
+            owner_id=767115163127906334,
             activity=discord.Activity(
                 type=discord.ActivityType.listening,
-                name="pop music! v0.1.0 /ping",
+                name="pop music! /ping",
             ),
             status="idle",
             *args,
             **kwargs,
         )
 
+    @property
+    def db(self):
+        return self.pool
+
     async def setup_hook(self):
         """Set up logger and load extensions"""
+
+        ## ----- Logging ----- ##
+
         logger = logging.getLogger("discord")
         logger.setLevel(logging.DEBUG)
         fmt = "[{asctime}] [{levelname}] - {name}: {message}"
-        date_fmt = "%d %b %Y %H:%M:%S"
+        date_fmt = "%H:%M:%S"
         # Log to file
         f_formatter = logging.Formatter(fmt, date_fmt, "{")
 
@@ -59,10 +73,19 @@ class Orbyt(commands.AutoShardedBot):
         logger.addHandler(file_handler)
         logger.addHandler(console_handler)
 
+        ## ----- Database Setup ----- ##
+
+        self.pool = await asqlite.create_pool("./db/orbyt.db")
+        async with self.pool.acquire() as c:
+            with open("./db/schema.sql") as f:
+                await c.executescript(f.read())
+
+        ## ----- Load Extensions ----- ##
+
         await self.load_extension("jishaku")
 
         loaded_exts = []
-        for ext in EXTENSIONS:
+        for ext in INITIAL_EXTENSIONS:
             try:
                 await self.load_extension(ext)
             except commands.ExtensionError as exc:
@@ -79,6 +102,10 @@ class Orbyt(commands.AutoShardedBot):
                 "light_blue",
             )
         )
+
+    async def close(self):
+        await self.pool.close()
+        await super().close()
 
     async def on_ready(self):
         """Called when the bot is ready"""
@@ -111,6 +138,6 @@ class Orbyt(commands.AutoShardedBot):
         """Asyncrously start the bot"""
 
         await super().start(
-            token=DEBUG_BOT_TOKEN if DEBUG else DISCORD_TOKEN,
+            token=DEBUG_BOT_TOKEN if DEBUG else PROD_TOKEN,
             reconnect=True,
         )

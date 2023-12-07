@@ -9,6 +9,7 @@ import discord
 from discord.ext import commands
 
 from bot import Orbyt
+from .util.views import ConfirmView
 
 
 class Developer(commands.Cog, command_attrs=dict(hidden=True)):
@@ -32,10 +33,8 @@ class Developer(commands.Cog, command_attrs=dict(hidden=True)):
     async def load(self, ctx: commands.Context, *exts):
         """dev load <ext+>: Load ext
 
-        Parameters
-        ----------
-            *exts : iterable
-                The extension(s) to load
+        Args:
+            exts: Extensions to load
         """
         for ext in exts:
             try:
@@ -51,11 +50,8 @@ class Developer(commands.Cog, command_attrs=dict(hidden=True)):
     async def unload(self, ctx: commands.Context, *exts):
         """dev unload <ext+>: Unload ext
 
-        Parameters
-        ----------
-            *exts : iterable
-                The extension(s) to unload
-        """
+        Args:
+            exts: Extensions to unload"""
         for ext in exts:
             try:
                 if ext == "developer":
@@ -72,11 +68,8 @@ class Developer(commands.Cog, command_attrs=dict(hidden=True)):
     async def reload(self, ctx: commands.Context, *exts):
         """dev reload <ext+>: Reload ext
 
-        Parameters
-        ----------
-            *exts : iterable
-                The extension(s) to reload
-        """
+        Args:
+            exts: Extensions to reload"""
         for ext in exts:
             try:
                 await self.bot.reload_extension(f"exts.{ext}")
@@ -103,12 +96,6 @@ class Developer(commands.Cog, command_attrs=dict(hidden=True)):
         sync ^ -> clear commands from current guild + sync;
         sync id_1 id_2 -> syncs guilds with id 1 and 2;
 
-        Parameters
-        ----------
-            guilds : list, optional
-                The guilds to sync
-            spec : str, optional
-                The spec to use
         """
         await ctx.send("Syncing")
         if not guilds:
@@ -139,6 +126,20 @@ class Developer(commands.Cog, command_attrs=dict(hidden=True)):
                 ret += 1
 
         await ctx.send(f"Synced the tree to {ret}/{len(guilds)}.")
+
+    @commands.command(name="shutdown", aliases=["close"])
+    @commands.is_owner()
+    async def shutdown(self, ctx):
+        """Shuts down the bot"""
+        view = ConfirmView(
+            timeout=20, confirm_msg="Shutting Down", deny_msg="Cancelled", target=ctx
+        )
+        await ctx.send("Are you sure you want to shutdown the bot?", view=view)
+        await view.wait()
+
+        if view.value:
+            await ctx.send(":wave: - Goodbye.")
+            await self.bot.close()
 
 
 async def setup(bot: Orbyt):

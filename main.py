@@ -1,12 +1,9 @@
 """A Quality-of-Life multipurpose Discord Bot.
 
+Copyright (C) 2023 Ritam Das
+
 To get full list of features run `/help`
 In any Discord channel in a Discord guild where Orbyt is present.
-
-Example:
-    To run the project, execute this file directly:
-
-        $ python main.py
 
 Author:
     Ritam Das
@@ -19,18 +16,16 @@ __copyright__ = "Copyright (C) 2023 Ritam Das"
 __title__ = "Orbyt"
 __author__ = "Nxrmqlly (Ritam Das)"
 __license__ = "GPL v3"
-__version__ = "0.0.1a"
 
 import os
 from asyncio import run
-
 
 from termcolor import colored
 
 from bot import Orbyt
 
 
-async def _run():
+async def _start():
     """
     Runs the function asynchronously to start the bot.
 
@@ -49,7 +44,7 @@ if __name__ == "__main__":
 888      888 oooo d8b  888oooo.  oooo    ooo .o888oo      By Nxrmqlly
 888      888 `888""8P  d88' `88b  `88.  .8'    888        https://github.com/nxrmqlly/Orbyt
 888      888  888      888   888   `88..8'     888
-`88b    d88'  888      888   888    `888'      888 .      Copyright (C) 2023 Ritam Das
+`88b    d88'  888      888   888    `888'      888 .      Copyright (C) 2023 Ritam Das | GPL v3
  `Y8bood8P'  d888b     `Y8bod8P'     .8'       "888" 
                                  .o..P'              
                                  `Y8P'               
@@ -60,4 +55,5 @@ if __name__ == "__main__":
             color="light_magenta",
         )
     )
-    run(_run())
+
+    run(_start())

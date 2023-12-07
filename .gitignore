@@ -2,6 +2,9 @@
 .venv/
 *.log
 config.py
-*.dev.py
+*.dev.*
 __pycache__/
 *.pyc
+*.db
+*.db-shm
+*.db-wal
