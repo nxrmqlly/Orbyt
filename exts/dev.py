@@ -3,13 +3,49 @@ Commands for developers only
 """
 
 
-from typing import Optional, Literal
+from typing import List, Optional, Literal
 
 import discord
 from discord.ext import commands
 
 from bot import Orbyt
 from .util.views import ConfirmView
+from .util.paginator import CustomPaginator
+
+
+class thispagething(CustomPaginator):
+    def __init__(
+        self,
+        *,
+        entries: List,
+        per_page: int = 10,
+        clamp_pages: bool = True,
+        target=None,
+        timeout=180,
+    ) -> None:
+        super().__init__(
+            entries=entries,
+            per_page=per_page,
+            clamp_pages=clamp_pages,
+            target=target,
+            timeout=timeout,
+        )
+
+    async def format_page(self, entries: List):
+        embed = discord.Embed(
+            title=f"Yes!",
+            color=discord.Color.blurple(),
+            description="\n".join(
+                [
+                    f"**{i+1}.** {discord.utils.escape_markdown(f'entry {entry}')}"
+                    for i, entry in enumerate(entries)
+                ]
+            ),
+        )
+
+        embed.set_footer(text=f"Page {self.current_page}/{self.total_pages}")
+
+        return embed
 
 
 class Developer(commands.Cog, command_attrs=dict(hidden=True)):
@@ -140,6 +176,13 @@ class Developer(commands.Cog, command_attrs=dict(hidden=True)):
         if view.value:
             await ctx.send(":wave: - Goodbye.")
             await self.bot.close()
+
+    @commands.command(name="testpage")
+    @commands.is_owner()
+    async def test_page(self, ctx):
+        view = thispagething(entries=range(50), timeout=10)
+        msg = await ctx.send("OK", view=view, embed=await view.embed())
+        view.ctx_msg = msg
 
 
 async def setup(bot: Orbyt):

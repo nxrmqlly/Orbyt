@@ -75,7 +75,7 @@ class Info(commands.Cog):
                 value="\n".join([f"**{k}:** {v}" for k, v in counts.items()]),
             )
             .add_field(
-                name="<:booster_shine:995611491778711552> Boosts",
+                name=f"{EMOJIS['booster_shine']} Boosts",
                 value=f"**Boosters:** {guild.premium_subscription_count}"
                 + "\n"
                 + f"**Boost Level:** {guild.premium_tier or 'None'}",
@@ -85,21 +85,24 @@ class Info(commands.Cog):
                 value="\n".join([f"**{k}:** {v}" for k, v in membertypes.items()]),
             )
             .add_field(
-                name="<:owner_icon:995606433527779370> Owner",
+                name=f"{EMOJIS['owner_icon']} Owner",
                 value=guild.owner.mention + "\n" + f"**ID:** {guild.owner_id}",
             )
         )
         if guild.icon:
             embed.set_author(name=guild.name, icon_url=guild.icon.url)
             embed.set_thumbnail(url=guild.icon.url)
+            guild_icon_view = discord.ui.View().add_item(
+                discord.ui.Button(
+                    style=discord.ButtonStyle.url,
+                    label="Server Icon",
+                    url=guild.icon.url,
+                )
+            )
         else:
             embed.set_author(name=guild.name)
+            guild_icon_view = None
 
-        guild_icon_view = discord.ui.View().add_item(
-            discord.ui.Button(
-                style=discord.ButtonStyle.url, label="Server Icon", url=guild.icon.url
-            )
-        )
         await interaction.response.send_message(embed=embed, view=guild_icon_view)
 
     @info.command(name="user")
@@ -127,27 +130,51 @@ class Info(commands.Cog):
             if not user.display_name == user.name
             else EMOJIS["no"],
             "Discriminator": user.discriminator or "None",
-            "Created": f"{discord.utils.format_dt(user.created_at, 'f')} ({discord.utils.format_dt(user.created_at, 'R')})",
-            "Joined": f"{discord.utils.format_dt(user.joined_at, 'f')} ({discord.utils.format_dt(user.joined_at, 'R')})",
             "Is Owner?": EMOJIS["yes" if interaction.guild.owner == user else "no"],
             "Is Bot?": EMOJIS["yes" if user.bot else "no"],
         }
 
-        embed = discord.Embed(
-            title="ℹ️ User Information",
-            color=user.accent_color or discord.Color.blurple(),
-        ).add_field(
-            name="👤 Basic Info",
-            value="\n".join(
-                [f"**{k}:** {v}" for k, v in basic_info.items()],
-            ),
+        clean_roles = list(user.roles)
+        clean_roles.remove(user.guild.default_role)  # remove @everyone
+
+        embed = (
+            discord.Embed(
+                title="ℹ️ User Information",
+                color=user.accent_color or discord.Color.blurple(),
+            )
+            .add_field(
+                name="👤 Basic Info",
+                value="\n".join(
+                    [f"**{k}:** {v}" for k, v in basic_info.items()],
+                ),
+            )
+            .add_field(
+                name=f"{EMOJIS['members_icon']} Created at",
+                value=f"{discord.utils.format_dt(user.created_at, 'F')} ({discord.utils.format_dt(user.created_at, "R")})",
+                inline=False
+            )
+            .add_field(
+                name=f"{EMOJIS['join']} Joined at",
+                value=f"{discord.utils.format_dt(user.joined_at, 'F')} ({discord.utils.format_dt(user.joined_at, 'R')})",
+                inline=False
+            )
+            .add_field(
+                name=f"{EMOJIS['roles_icon']} Roles",
+                value=(
+                    (", ".join(r.mention for r in clean_roles) or "No Roles")
+                    + "\n"
+                    + f"**Total:** {len(clean_roles)}\n"
+                    + f"**Top Role:** {(user.top_role.mention if user.top_role != user.guild.default_role else None) or 'None'}"
+                ),
+                inline=False,
+            )
         )
 
-        if user.avatar:
-            embed.set_author(name=user.name, icon_url=user.avatar.url)
-            embed.set_thumbnail(url=user.avatar.url)
-        else:
-            embed.set_author(name=user.name)
+
+        if av := user.avatar: 
+            embed.set_author(name=user.name, icon_url=av.url)
+            embed.set_thumbnail(url=av.url)
+
 
         await interaction.response.send_message(embed=embed)
 

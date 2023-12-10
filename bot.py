@@ -38,6 +38,7 @@ class Orbyt(commands.AutoShardedBot):
             *args,
             **kwargs,
         )
+        self._codeblock = "```"
 
     @property
     def db(self):

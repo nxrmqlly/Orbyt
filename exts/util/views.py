@@ -34,6 +34,8 @@ class BaseView(discord.ui.View):
             target.user if isinstance(target, discord.Interaction) else target.author
         )
 
+        self.ctx_msg = None
+
         super().__init__(timeout=timeout)
 
     async def stop(self, interaction: discord.Interaction):
@@ -73,10 +75,13 @@ class BaseView(discord.ui.View):
         for child in self.children:
             child.disabled = True
 
+        if not self.target:
+            return
+
         if isinstance(self.target, discord.Interaction):
             await self.target.edit_original_response(view=self)
         else:
-            await self.target.edit(view=self)
+            await self.ctx_msg.edit(view=self)
 
 
 class ConfirmView(BaseView):
