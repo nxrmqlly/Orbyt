@@ -74,7 +74,7 @@ class AddTag(Modal):
 
             await c.execute(
                 "INSERT INTO tags (name, content, guild, author, created_at) VALUES (LOWER($1), $2, $3, $4, $5)",
-                self.name.value,
+                discord.utils.escape_mentions(self.name.value),
                 self.content.value,
                 interaction.guild.id,
                 interaction.user.id,
