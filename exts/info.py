@@ -150,13 +150,13 @@ class Info(commands.Cog):
             )
             .add_field(
                 name=f"{EMOJIS['members_icon']} Created at",
-                value=f"{discord.utils.format_dt(user.created_at, 'F')} ({discord.utils.format_dt(user.created_at, "R")})",
-                inline=False
+                value=f"{discord.utils.format_dt(user.created_at, 'F')} ({discord.utils.format_dt(user.created_at, 'R')})",
+                inline=False,
             )
             .add_field(
                 name=f"{EMOJIS['join']} Joined at",
                 value=f"{discord.utils.format_dt(user.joined_at, 'F')} ({discord.utils.format_dt(user.joined_at, 'R')})",
-                inline=False
+                inline=False,
             )
             .add_field(
                 name=f"{EMOJIS['roles_icon']} Roles",
@@ -170,11 +170,9 @@ class Info(commands.Cog):
             )
         )
 
-
-        if av := user.avatar: 
+        if av := user.avatar:
             embed.set_author(name=user.name, icon_url=av.url)
             embed.set_thumbnail(url=av.url)
-
 
         await interaction.response.send_message(embed=embed)
 
