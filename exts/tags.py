@@ -140,7 +140,7 @@ class EditTag(Modal):
                 )
 
             embed = discord.Embed(
-                description=self.new_content.value,
+                description=discord.utils.escape_markdown(self.new_content.value),
                 color=discord.Colour.yellow(),
             )
 
