@@ -31,7 +31,9 @@ class Orbyt(commands.AutoShardedBot):
             intents=discord.Intents.all(),
             owner_id=767115163127906334,
             activity=discord.Activity(
-                type=discord.ActivityType.competing, name="the Race for Space. /ping"
+                type=discord.ActivityType.custom,
+                name="Orbyt",
+                state="💫 Exploring new dimensions. /ping",
             ),
             status="idle",
             *args,
