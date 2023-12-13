@@ -2,7 +2,6 @@
 A Extension to help with tags
 """
 
-import re
 from typing import List
 
 import discord

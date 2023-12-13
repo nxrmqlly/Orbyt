@@ -1,8 +1,8 @@
 # Orbyt ✨
 
 > Orbyt is a versatile, quality-of-life Discord Bot for Discord enthusiasts.
- [ ⚠️ In Development ] (See: [Contributing](#contributing))
-
+ [ ⚠️ In Development ] (See: [Contributing](#contributing)) <br><br>
+> Invite Orbyt [HERE](https://discord.com/oauth2/authorize?client_id=900057091031580783&permissions=1945627743&redirect_uri=https://discord.gg/yYSjejHX9G&response_type=code&scope=identify+bot+applications.commands)
 ### Table of contents
 1. [Features](#features)
 2. [License](#license)

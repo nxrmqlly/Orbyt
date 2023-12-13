@@ -2,8 +2,7 @@
 
 Copyright (C) 2023 Ritam Das
 
-To get full list of features run `/help`
-In any Discord channel in a Discord guild where Orbyt is present.
+Orbyt is a versatile, quality-of-life Discord Bot for Discord enthusiasts.
 
 Author:
     Ritam Das
