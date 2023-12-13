@@ -208,19 +208,6 @@ class Tags(commands.GroupCog, name="tag"):
         else:
             content = data[0]
 
-        # mention_re = r"@(everyone|here|[!&]?[0-9]{17,20})"
-        # _mentioned = re.search(mention_re, content)
-
-        # if _mentioned:
-        #     # Get ping name
-
-        #     _user = self.bot.get_user(_mentioned.group(1))
-
-        #     # if user exists get the username
-        #     if _user is not None:
-        #         content = content.replace(_mentioned.group(0), r"\@" + str(_user))
-        #         print(content)
-
         await interaction.response.send_message(
             content=discord.utils.escape_mentions(content)
         )
