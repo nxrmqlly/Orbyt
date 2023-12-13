@@ -2,6 +2,7 @@
 A Extension to help with tags
 """
 
+import re
 from typing import List
 
 import discord
@@ -74,7 +75,7 @@ class AddTag(Modal):
 
             await c.execute(
                 "INSERT INTO tags (name, content, guild, author, created_at) VALUES (LOWER($1), $2, $3, $4, $5)",
-                discord.utils.escape_mentions(self.name.value),
+                self.name.value,
                 self.content.value,
                 interaction.guild.id,
                 interaction.user.id,
@@ -207,7 +208,22 @@ class Tags(commands.GroupCog, name="tag"):
         else:
             content = data[0]
 
-        await interaction.response.send_message(content=content)
+        # mention_re = r"@(everyone|here|[!&]?[0-9]{17,20})"
+        # _mentioned = re.search(mention_re, content)
+
+        # if _mentioned:
+        #     # Get ping name
+
+        #     _user = self.bot.get_user(_mentioned.group(1))
+
+        #     # if user exists get the username
+        #     if _user is not None:
+        #         content = content.replace(_mentioned.group(0), r"\@" + str(_user))
+        #         print(content)
+
+        await interaction.response.send_message(
+            content=discord.utils.escape_mentions(content)
+        )
 
     @app_commands.command(name="remove")
     async def remove_tag(self, interaction: discord.Interaction, name: str):

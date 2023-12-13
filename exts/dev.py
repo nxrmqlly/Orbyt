@@ -66,6 +66,7 @@ class Developer(commands.Cog, command_attrs=dict(hidden=True)):
         await ctx.send(f"Available: {cmds}")
 
     @dev.command("load", aliases=["l"])
+    @commands.is_owner()
     async def load(self, ctx: commands.Context, *exts):
         """dev load <ext+>: Load ext
 
@@ -83,6 +84,7 @@ class Developer(commands.Cog, command_attrs=dict(hidden=True)):
                 continue
 
     @dev.command("unload", aliases=["u"])
+    @commands.is_owner()
     async def unload(self, ctx: commands.Context, *exts):
         """dev unload <ext+>: Unload ext
 
@@ -101,6 +103,7 @@ class Developer(commands.Cog, command_attrs=dict(hidden=True)):
                 continue
 
     @dev.command("reload", aliases=["r"])
+    @commands.is_owner()
     async def reload(self, ctx: commands.Context, *exts):
         """dev reload <ext+>: Reload ext
 
