@@ -3,6 +3,7 @@ A Extension to help with tags
 """
 
 from typing import List
+from datetime import datetime
 
 import discord
 from sqlite3 import Row
@@ -12,15 +13,36 @@ from discord.ui import TextInput, Modal
 
 
 from bot import Orbyt
-from .util.constants import EMOJIS
+from .util.text_format import truncate
+from .util.constants import EMOJIS, SECONDARY_COLOR, CONTRAST_COLOR
 from .util.paginator import CustomPaginator
 
 
-class ViewTagPages(CustomPaginator[int, Orbyt]):
+class TagPages(CustomPaginator[int, Orbyt]):
+    def __init__(
+        self,
+        *,
+        entries: List[int],
+        per_page: int = 10,
+        clamp_pages: bool = True,
+        target,
+        timeout=180,
+        title: str = "Tags",
+    ) -> None:
+        self.title = title
+
+        super().__init__(
+            entries=entries,
+            per_page=per_page,
+            clamp_pages=clamp_pages,
+            target=target,
+            timeout=timeout,
+        )
+
     async def format_page(self, entries: List[Row]) -> discord.Embed:
         embed = discord.Embed(
-            title=f"Tags in {self._guild.name}",
-            color=discord.Color.blurple(),
+            title=self.title,
+            color=SECONDARY_COLOR,
             description="\n".join(
                 [
                     f"**{i+1}.** {discord.utils.escape_markdown(entry[0])} (ID: {entry[1]})"
@@ -53,7 +75,7 @@ class AddTag(Modal):
         placeholder="Enter the content of the tag",
         required=True,
         style=discord.TextStyle.long,
-        max_length=2000,
+        max_length=1950,
     )
 
     async def on_submit(self, interaction: discord.Interaction):
@@ -83,7 +105,7 @@ class AddTag(Modal):
 
             em = discord.Embed(
                 description=f"{discord.utils.escape_markdown(self.content.value)}",
-                color=discord.Color.green(),
+                color=SECONDARY_COLOR,
             )
             em.add_field(
                 name="Tag created at:",
@@ -141,7 +163,7 @@ class EditTag(Modal):
 
             embed = discord.Embed(
                 description=discord.utils.escape_markdown(self.new_content.value),
-                color=discord.Colour.yellow(),
+                color=CONTRAST_COLOR,
             )
 
             await interaction.response.send_message(
@@ -166,17 +188,14 @@ class Tags(commands.GroupCog, name="tag"):
         return [author_bypass, finished_query]
 
     @app_commands.command(name="add")
-    async def add_tag(self, interaction: discord.Interaction):
-        """Add a tag to the server"""
+    async def tag_add(self, interaction: discord.Interaction):
+        """Add a tag to the server (Run in Modal)"""
         modal = AddTag(self.bot)
         await interaction.response.send_modal(modal)
 
     @app_commands.command(name="view")
-    async def view_tag(
-        self,
-        interaction: discord.Interaction,
-        name: str,
-        raw: bool = False,
+    async def tag_view(
+        self, interaction: discord.Interaction, name: str, raw: bool = False
     ):
         """View a tag
 
@@ -184,7 +203,7 @@ class Tags(commands.GroupCog, name="tag"):
         -----------
 
         name: str
-            The name of the tag
+            The name of the tag to view
         raw: Optional[bool]
             Whether to display the content of the tag without markdown
         """
@@ -212,13 +231,13 @@ class Tags(commands.GroupCog, name="tag"):
         )
 
     @app_commands.command(name="remove")
-    async def remove_tag(self, interaction: discord.Interaction, name: str):
+    async def tag_remove(self, interaction: discord.Interaction, name: str):
         """Remove a tag from the server
 
         Parameters
         -----------
         name: str
-            The name of the tag
+            The name of the tag to delete
         """
 
         # check if user has manage_guild or manage_messages permssion or is bot owner
@@ -257,7 +276,7 @@ class Tags(commands.GroupCog, name="tag"):
         )
 
     @app_commands.command(name="list")
-    async def list_tags(self, interaction: discord.Interaction):
+    async def tag_list(self, interaction: discord.Interaction):
         """View all tags of the server"""
 
         async with self.bot.pool.acquire() as c:
@@ -270,26 +289,25 @@ class Tags(commands.GroupCog, name="tag"):
                     f"{EMOJIS['no']} - No tags found", ephemeral=True
                 )
 
-            view = ViewTagPages(
-                clamp_pages=False, timeout=60, entries=data, target=interaction
+            view = TagPages(
+                clamp_pages=False,
+                timeout=60,
+                entries=data,
+                target=interaction,
+                title=f"Tags in {interaction.guild.name}",
             )
-            view._guild = interaction.guild
 
             embed = await view.embed()
             await interaction.response.send_message(embed=embed, view=view)
 
     @app_commands.command(name="edit")
-    async def edit_tag(
-        self,
-        interaction: discord.Interaction,
-        name: str,
-    ):
+    async def tag_edit(self, interaction: discord.Interaction, name: str):
         """Edit a Tag
 
         Parameters
         -----------
         name : str
-            The name of the tag
+            The name of the tag to edit
         """
 
         bypass = self.bypass_query(interaction)
@@ -320,6 +338,127 @@ class Tags(commands.GroupCog, name="tag"):
         modal = EditTag(self.bot, query, name, author_bypass)
 
         await interaction.response.send_modal(modal)
+
+    @app_commands.command(name="search")
+    async def tag_search(self, interaction: discord.Interaction, query: str):
+        """Search for a tag in the server
+
+        Parameters
+        -----------
+        query : str
+            The query by which to search for
+        """
+
+        async with self.bot.pool.acquire() as c:
+            data = await c.fetchall(
+                "SELECT name, id FROM tags WHERE name LIKE $1 AND guild = $2 ORDER BY name ASC LIMIT 25",
+                f"%{query}%",
+                interaction.guild.id,
+            )
+
+            if not data:
+                return await interaction.response.send_message(
+                    f"{EMOJIS['no']} - No tags found matching `{query}`", ephemeral=True
+                )
+
+            view = TagPages(
+                clamp_pages=True,
+                timeout=60,
+                entries=data,
+                target=interaction,
+                title=f"Tags matching {query}",
+            )
+            emb = await view.embed()
+
+            await interaction.response.send_message(embed=emb, view=view)
+
+    @app_commands.command(name="info")
+    async def tag_info(self, interaction: discord.Interaction, name: str):
+        """View the info of a tag
+
+        Parameters
+        -----------
+        name : str
+            The name of the tag to view information about
+        """
+
+        async with self.bot.pool.acquire() as c:
+            data = await c.fetchone(
+                "SELECT author, created_at FROM tags WHERE name = LOWER($1) AND guild = $2",
+                name,
+                interaction.guild.id,
+            )
+
+            if not data:
+                return await interaction.response.send_message(
+                    f"{EMOJIS['no']} - Tag `{name}` not found", ephemeral=True
+                )
+
+            _created_at = datetime.fromtimestamp(data[1])
+
+            embed = (
+                discord.Embed(title=f"Tag: `{name}` Information", color=SECONDARY_COLOR)
+                .add_field(
+                    name="Author",
+                    value=f"<@{data[0]}>",
+                )
+                .add_field(
+                    name="Created At",
+                    value=f"{discord.utils.format_dt(_created_at, 'F')} ({discord.utils.format_dt(_created_at, 'R')})",
+                )
+            )
+        await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(name="random")
+    async def tag_random(self, interaction: discord.Interaction):
+        """View a random tag from the server"""
+
+        async with self.bot.pool.acquire() as c:
+            data = await c.fetchone(
+                "SELECT name, content FROM tags WHERE guild = $1 ORDER BY RANDOM() LIMIT 1",
+                interaction.guild.id,
+            )
+
+            if not data:
+                return await interaction.response.send_message(
+                    f"{EMOJIS['no']} - No tags found", ephemeral=True
+                )
+
+            _content = f"{EMOJIS['dictionary']} - `{discord.utils.escape_mentions(data[0])}`\n\n{data[1]}"
+
+            await interaction.response.send_message(content=truncate(_content, 2000))
+
+    @app_commands.command(name="by-user")
+    async def tag_user(self, interaction: discord.Interaction, user: discord.User):
+        """View all tags of a user
+
+        Parameters
+        -----------
+        user : discord.User
+            The user to view the tags of
+        """
+
+        async with self.bot.pool.acquire() as c:
+            data = await c.fetchall(
+                "SELECT name, id FROM tags WHERE guild = $1 AND author = $2",
+                interaction.guild.id,
+                user.id,
+            )
+
+            if not data:
+                return await interaction.response.send_message(
+                    f"{EMOJIS['no']} - No tags found from @{str(user)}", ephemeral=True
+                )
+
+            view = TagPages(
+                clamp_pages=True,
+                timeout=60,
+                entries=data,
+                target=interaction,
+                title=f"Tags from @{str(user)}",
+            )
+            emb = await view.embed()
+            await interaction.response.send_message(embed=emb, view=view)
 
 
 async def setup(bot: Orbyt):

@@ -9,7 +9,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from bot import Orbyt
-from .util.constants import EMOJIS
+from .util.constants import EMOJIS, SECONDARY_COLOR
 
 
 class Info(commands.Cog):
@@ -65,7 +65,7 @@ class Info(commands.Cog):
         }
 
         embed = (
-            discord.Embed(title="ℹ️ Server Information", color=discord.Color.blurple())
+            discord.Embed(title="ℹ️ Server Information", color=SECONDARY_COLOR)
             .add_field(
                 name="🌐 General Info",
                 value="\n".join([f"**{k}:** {v}" for k, v in gen_info.items()]),
@@ -140,7 +140,7 @@ class Info(commands.Cog):
         embed = (
             discord.Embed(
                 title="ℹ️ User Information",
-                color=user.accent_color or discord.Color.blurple(),
+                color=user.accent_color or SECONDARY_COLOR,
             )
             .add_field(
                 name="👤 Basic Info",

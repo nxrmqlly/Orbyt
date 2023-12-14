@@ -34,6 +34,28 @@ def spaced_padding(text, width=50, padding="-") -> str:
     return f_tx
 
 
+def truncate(string: str, width: int = 50) -> str:
+    """
+    Truncates the given `text` to the given `width`.
+
+    Parameters
+    -----------
+    text: :class:`str`
+        The text to truncate.
+    width: :class:`int`
+        The width of the text.
+
+    Returns
+    --------
+    :class:`str`
+        The truncated text.
+    """
+
+    if len(string) > width:
+        string = string[: width - 3] + "..."
+    return string
+
+
 class CustomFormatter(logging.Formatter):
     """
     Formatter for console logging
