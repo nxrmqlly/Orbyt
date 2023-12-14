@@ -75,7 +75,7 @@ class AddTag(Modal):
         placeholder="Enter the content of the tag",
         required=True,
         style=discord.TextStyle.long,
-        max_length=1950,
+        max_length=2000,
     )
 
     async def on_submit(self, interaction: discord.Interaction):
