@@ -20,7 +20,7 @@
 
 ## Features
 
-- A ``Tags`` System for quick responders, saving text etc.
+- A Robust ``Tags`` System for quick responders, saving text etc.
 - ``Information`` Based commands like `/info user`, `/info server` etc.
 
 ## Getting Started
