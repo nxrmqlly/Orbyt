@@ -176,6 +176,8 @@ class Festive(commands.Cog):
                 ephemeral=True,
             )
 
+        await interaction.response.defer(thinking=True)
+
         author = str(interaction.user)
         to_user = str(user)
 
@@ -197,7 +199,7 @@ class Festive(commands.Cog):
         )
         view.bot = self.bot
 
-        await interaction.response.send_message(
+        await interaction.followup.send(
             content="🎁 - Here is your card! Is this OK? (Preview)",
             file=discord.File(card, filename="card.png"),
             ephemeral=True,
