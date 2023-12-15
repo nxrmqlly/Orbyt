@@ -20,8 +20,9 @@
 
 ## Features
 
-- A Robust ``Tags`` System for quick responders, saving text etc.
+- ``Tags`` A Robust system for quick responders, saving text etc.
 - ``Information`` Based commands like `/info user`, `/info server` etc.
+- ``Festive`` Limited time commands for a season.
 
 ## Getting Started
 

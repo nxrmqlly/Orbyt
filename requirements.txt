@@ -2,3 +2,4 @@ discord.py==2.3.2
 termcolor==2.3.0
 jishaku==2.5.2
 asqlite @ git+https://github.com/Rapptz/asqlite
+Pillow==10.1.0

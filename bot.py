@@ -17,6 +17,7 @@ INITIAL_EXTENSIONS = [
     "exts.info",
     "exts.dev",
     "exts.tags",
+    "exts.festive",
 ]
 
 
