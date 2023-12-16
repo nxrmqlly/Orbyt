@@ -9,6 +9,7 @@ from discord.ext import commands
 from termcolor import colored
 import asqlite
 
+from logging.handlers import RotatingFileHandler
 from exts.util.text_format import spaced_padding, CustomFormatter
 from config import DEBUG, PROD_TOKEN, DEBUG_BOT_TOKEN
 
@@ -58,8 +59,8 @@ class Orbyt(commands.AutoShardedBot):
         # Log to file
         f_formatter = logging.Formatter(fmt, date_fmt, "{")
 
-        file_handler = logging.FileHandler(
-            "./logs/discord.log", mode="w", encoding="utf-8"
+        file_handler = RotatingFileHandler(
+            "./logs/discord.log", mode="w", encoding="utf-8", maxBytes=5 * 1024 * 1024
         )
         file_handler.setLevel(logging.DEBUG)
         file_handler.setFormatter(f_formatter)

@@ -19,9 +19,9 @@ from .util.text_format import truncate
 
 def image_cooldown(interaction: discord.Interaction):
     if interaction.user.id == interaction.client.owner_id:
-        return commands.cooldown(1, 0, commands.BucketType.user)
+        return None
 
-    return commands.cooldown(1, 120, commands.BucketType.user)
+    return app_commands.Cooldown(1, 120)
 
 
 def christmas_card(author: str, to_user: str, color: str):
@@ -164,7 +164,7 @@ class Festive(commands.Cog):
     )
 
     @card.command(name="christmas")
-    @app_commands.checks.cooldown(1, 120.0, key=image_cooldown)
+    @app_commands.checks.dynamic_cooldown(image_cooldown)
     async def christmas(
         self,
         interaction: discord.Interaction,
