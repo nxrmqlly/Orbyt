@@ -17,6 +17,13 @@ from .util.views import BaseView
 from .util.text_format import truncate
 
 
+def image_cooldown(interaction: discord.Interaction):
+    if interaction.user.id == interaction.client.owner_id:
+        return commands.cooldown(1, 0, commands.BucketType.user)
+
+    return commands.cooldown(1, 120, commands.BucketType.user)
+
+
 def christmas_card(author: str, to_user: str, color: str):
     messages = [
         "Merry Christmas and Happy New Year!",
@@ -178,8 +185,6 @@ class Festive(commands.Cog):
                 ephemeral=True,
             )
 
-        await interaction.response.defer(thinking=True)
-
         author = str(interaction.user)
         to_user = str(user)
 
@@ -201,7 +206,7 @@ class Festive(commands.Cog):
         )
         view.bot = self.bot
 
-        await interaction.followup.send(
+        await interaction.response.send_message(
             content="🎁 - Here is your card! Is this OK? (Preview)",
             file=discord.File(card, filename="card.png"),
             ephemeral=True,
