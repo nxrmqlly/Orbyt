@@ -115,18 +115,23 @@ class SendCardConfirm(BaseView):
         self, interaction: discord.Interaction, button: discord.ui.Button
     ):
         try:
+            festive_emojis = ["💖", "🎁", "🎅", "⛄", "🎄", "💝", "❄️"]
+            emj = random.choice(festive_emojis)
+
             jump_view = discord.ui.View().add_item(
                 discord.ui.Button(
                     label=f"Sent from {self.target.guild.name}",
                     style=discord.ButtonStyle.url,
                     url=self.target.channel.jump_url,
+                    emoji=emj,
                 )
             )
 
             self.card_img.seek(0)
 
             await self.to_user.send(
-                f"🎄 - **@{self.author.name}** has sent you a card!",
+                f"{emj} - **@{self.author.name}** has sent you a card!\n"
+                "||**Tip:** Use `/card christmas` in a mutual server to send a christmas card!||",
                 file=discord.File(self.card_img, filename="card.png"),
                 view=jump_view,
             )
