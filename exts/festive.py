@@ -159,7 +159,7 @@ class Festive(commands.Cog):
     )
 
     @card.command(name="christmas")
-    @app_commands.checks.cooldown(1, 120.0, key=lambda i: (i.guild_id, i.user.id))
+    @app_commands.checks.cooldown(1, 120.0, key=image_cooldown)
     async def christmas(
         self,
         interaction: discord.Interaction,
