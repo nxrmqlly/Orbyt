@@ -17,7 +17,7 @@ from .util.views import BaseView
 from .util.text_format import truncate
 
 
-def christmas_card(author, to_user, color):
+def christmas_card(author: str, to_user: str, color: str):
     messages = [
         "Merry Christmas and Happy New Year!",
         "Season's Greetings! And best wishes for the New Year.",
@@ -27,58 +27,60 @@ def christmas_card(author, to_user, color):
         "Wishing you peace and joy all season long. Happy Holidays!",
     ]
 
-    with Image.open(f"./exts/assets/xmas_{color}.png") as img:
-        width, height = img.size
+    img = Image.open(f"./exts/assets/xmas_{color.lower()}.png")
+    width, height = img.size
 
-        to_user_font = ImageFont.truetype("./exts/assets/fonts/Kids Year.ttf", 40)
-        author_font = ImageFont.truetype("./exts/assets/fonts/coolvetica-rg.otf", 30)
-        greet_font = ImageFont.truetype("./exts/assets/fonts/coolvetica-rg.otf", 35)
-        canvas = ImageDraw.Draw(img)
+    to_user_font = ImageFont.truetype("./exts/assets/fonts/Kids Year.ttf", 40)
+    author_font = ImageFont.truetype("./exts/assets/fonts/coolvetica-rg.otf", 30)
+    greet_font = ImageFont.truetype("./exts/assets/fonts/coolvetica-rg.otf", 35)
+    canvas = ImageDraw.Draw(img)
 
-        author = truncate(f"@{author}", 32)
+    author = truncate(f"@{author}", 32)
 
-        to_user = truncate(f"@{to_user}", 26)
-        to_user_width = canvas.textlength(to_user, font=to_user_font)
+    to_user = truncate(f"@{to_user}", 26)
+    to_user_width = canvas.textlength(to_user, font=to_user_font)
 
-        greet = "“" + random.choice(messages) + "”"
-        greet_width = canvas.textlength(greet, font=greet_font)
+    greet = "“" + random.choice(messages) + "”"
+    greet_width = canvas.textlength(greet, font=greet_font)
 
-        canvas.text(  # to user
-            (
-                (width - to_user_width) / 2,
-                (height / 2) - 22,
-            ),
-            to_user,
-            (255, 255, 255),
-            font=to_user_font,
-        )
+    canvas.text(  # to user
+        (
+            (width - to_user_width) / 2,
+            (height / 2) - 22,
+        ),
+        to_user,
+        (255, 255, 255),
+        font=to_user_font,
+    )
 
-        canvas.text(  # Sent by author
-            (
-                115,
-                798,
-            ),
-            author,
-            (255, 255, 255),
-            font=author_font,
-            align="center",
-        )
+    canvas.text(  # Sent by author
+        (
+            115,
+            798,
+        ),
+        author,
+        (255, 255, 255),
+        font=author_font,
+        align="center",
+    )
 
-        canvas.text(  # Greet
-            (
-                (width - greet_width) / 2,
-                (height / 2) + 70,
-            ),
-            greet,
-            (255, 255, 255),
-            font=greet_font,
-        )
+    canvas.text(  # Greet
+        (
+            (width - greet_width) / 2,
+            (height / 2) + 70,
+        ),
+        greet,
+        (255, 255, 255),
+        font=greet_font,
+    )
 
-        _as_bytes = BytesIO()
-        img.save(_as_bytes, format="PNG")
-        _as_bytes.seek(0)
+    _as_bytes = BytesIO()
+    img.save(_as_bytes, format="PNG")
+    _as_bytes.seek(0)
 
-        return _as_bytes
+    img.close()
+
+    return _as_bytes
 
 
 class SendCardConfirm(BaseView):
