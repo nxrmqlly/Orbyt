@@ -10,3 +10,4 @@ __pycache__/
 .git/ 
 .venv/
 .vscode/
+.mypy_cache/
