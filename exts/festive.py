@@ -33,6 +33,7 @@ from PIL import Image, ImageDraw, ImageFont
 from .util.constants import EMOJIS
 from .util.views import BaseView
 from .util.text_format import truncate
+from bot import Orbyt
 
 
 def image_cooldown(interaction: discord.Interaction):
@@ -174,8 +175,8 @@ class SendCardConfirm(BaseView):
 
 
 class Festive(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
+    def __init__(self, bot: Orbyt):
+        self.bot: Orbyt = bot
 
     card = app_commands.Group(
         name="card", description="Send festive cards to users in the server!"
@@ -237,15 +238,6 @@ class Festive(commands.Cog):
             view=view,
         )
 
-    @christmas.error
-    async def on_xmas_err(
-        self,
-        interaction: discord.Interaction,
-        error: app_commands.AppCommandError,
-    ):
-        if isinstance(error, app_commands.CommandOnCooldown):
-            await interaction.response.send_message("⏰ - " + str(error), ephemeral=True)
 
-
-async def setup(bot):
+async def setup(bot: Orbyt):
     await bot.add_cog(Festive(bot))

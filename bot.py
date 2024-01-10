@@ -37,6 +37,7 @@ INITIAL_EXTENSIONS = [
     "exts.tags",
     "exts.festive",
     "exts.embed",
+    "exts.error",
 ]
 
 
@@ -45,7 +46,7 @@ class Orbyt(commands.AutoShardedBot):
 
     def __init__(self, *args, **kwargs):
         super().__init__(
-            command_prefix=commands.when_mentioned_or("o?"),
+            command_prefix=commands.when_mentioned,
             case_insensitive=True,
             strip_after_prefix=True,
             intents=discord.Intents.default(),
