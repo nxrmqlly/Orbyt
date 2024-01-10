@@ -1,13 +1,45 @@
+#
+# This file is part of Orbyt. (https://github.com/nxmrqlly/orbyt)
+# Copyright (c) 2023-present Ritam Das
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """Boilerplate discord.ui.Views."""
 
 from typing import TypeVar, Optional, Union
+import re
 
 import discord
 from discord.ext import commands
 
-from exts.util.constants import EMOJIS
+from exts.util.constants import EMOJIS, HTTP_URL_REGEX
 
 BotT = TypeVar("BotT", bound="commands.Bot")
+
+
+def re_url_match(url: str):
+    return re.fullmatch(HTTP_URL_REGEX, url)
+
+
+def message_jump_button(url: str, to_where: str = "to Message"):
+    if not re_url_match(url):
+        raise ValueError("Invalid URL. Check `is_http` param.")
+
+    return discord.ui.Button(
+        label=f"Jump {to_where}", style=discord.ButtonStyle.link, url=url
+    )
 
 
 class BaseView(discord.ui.View):
@@ -56,7 +88,8 @@ class BaseView(discord.ui.View):
 
         if self.author.id != interaction.user.id:
             return await interaction.response.send_message(
-                f"{EMOJIS['no']} - Only the author can respond to this", ephemeral=True
+                f"{EMOJIS['no']} - Only the author can respond to this",
+                ephemeral=True,
             )
 
         # chnl
@@ -66,7 +99,8 @@ class BaseView(discord.ui.View):
             and self.target.channel.id != interaction.channel.id
         ):
             return await interaction.response.send_message(
-                f"{EMOJIS['no']} - This isn't in the right channel", ephemeral=True
+                f"{EMOJIS['no']} - This isn't in the right channel",
+                ephemeral=True,
             )
 
         return True

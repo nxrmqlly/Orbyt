@@ -1,3 +1,21 @@
+#
+# This file is part of Orbyt. (https://github.com/nxmrqlly/orbyt)
+# Copyright (c) 2023-present Ritam Das
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 Limited-Time Commands (updated regularly)
 """
@@ -182,7 +200,8 @@ class Festive(commands.Cog):
         """
         if user.bot:
             return await interaction.response.send_message(
-                f"{EMOJIS['no']} - You cannot send a card to a bot.", ephemeral=True
+                f"{EMOJIS['no']} - You cannot send a card to a bot.",
+                ephemeral=True,
             )
         if user == interaction.user:
             return await interaction.response.send_message(
@@ -220,7 +239,9 @@ class Festive(commands.Cog):
 
     @christmas.error
     async def on_xmas_err(
-        self, interaction: discord.Interaction, error: app_commands.AppCommandError
+        self,
+        interaction: discord.Interaction,
+        error: app_commands.AppCommandError,
     ):
         if isinstance(error, app_commands.CommandOnCooldown):
             await interaction.response.send_message("⏰ - " + str(error), ephemeral=True)

@@ -1,3 +1,20 @@
+#
+# This file is part of Orbyt. (https://github.com/nxmrqlly/orbyt)
+# Copyright (c) 2023-present Ritam Das
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+
 """Boilerplate code for Bot's root functionalities"""
 
 import logging
@@ -19,6 +36,7 @@ INITIAL_EXTENSIONS = [
     "exts.dev",
     "exts.tags",
     "exts.festive",
+    "exts.embed",
 ]
 
 
@@ -30,7 +48,7 @@ class Orbyt(commands.AutoShardedBot):
             command_prefix=commands.when_mentioned_or("o?"),
             case_insensitive=True,
             strip_after_prefix=True,
-            intents=discord.Intents.all(),
+            intents=discord.Intents.default(),
             owner_id=767115163127906334,
             activity=discord.Activity(
                 type=discord.ActivityType.custom,
@@ -53,14 +71,17 @@ class Orbyt(commands.AutoShardedBot):
         ## ----- Logging ----- ##
 
         logger = logging.getLogger("discord")
-        logger.setLevel(logging.DEBUG)
+        logger.setLevel(logging.INFO)
         fmt = "[{asctime}] [{levelname}] - {name}: {message}"
         date_fmt = "%H:%M:%S"
         # Log to file
         f_formatter = logging.Formatter(fmt, date_fmt, "{")
 
         file_handler = RotatingFileHandler(
-            "./logs/discord.log", mode="w", encoding="utf-8", maxBytes=5 * 1024 * 1024
+            "./logs/discord.log",
+            mode="w",
+            encoding="utf-8",
+            maxBytes=5 * 1024 * 1024,
         )
         file_handler.setLevel(logging.DEBUG)
         file_handler.setFormatter(f_formatter)

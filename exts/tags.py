@@ -1,3 +1,21 @@
+#
+# This file is part of Orbyt. (https://github.com/nxmrqlly/orbyt)
+# Copyright (c) 2023-present Ritam Das
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 A Extension to help with tags
 """
@@ -281,7 +299,8 @@ class Tags(commands.GroupCog, name="tag"):
 
         async with self.bot.pool.acquire() as c:
             data = await c.fetchall(
-                "SELECT name, id FROM tags WHERE guild = $1", interaction.guild.id
+                "SELECT name, id FROM tags WHERE guild = $1",
+                interaction.guild.id,
             )
 
             if not data:
@@ -358,7 +377,8 @@ class Tags(commands.GroupCog, name="tag"):
 
             if not data:
                 return await interaction.response.send_message(
-                    f"{EMOJIS['no']} - No tags found matching `{query}`", ephemeral=True
+                    f"{EMOJIS['no']} - No tags found matching `{query}`",
+                    ephemeral=True,
                 )
 
             view = TagPages(
@@ -447,7 +467,8 @@ class Tags(commands.GroupCog, name="tag"):
 
             if not data:
                 return await interaction.response.send_message(
-                    f"{EMOJIS['no']} - No tags found from @{str(user)}", ephemeral=True
+                    f"{EMOJIS['no']} - No tags found from @{str(user)}",
+                    ephemeral=True,
                 )
 
             view = TagPages(
