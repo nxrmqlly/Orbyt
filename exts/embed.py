@@ -997,6 +997,7 @@ class Embed(commands.Cog):
         self,
         interaction: discord.Interaction,
     ):
+        """Interactive Embed builder"""
         await interaction.response.send_message(
             embed=self.generate_help_embed(),
             view=EmbedBuilderView(timeout=600, target=interaction),
