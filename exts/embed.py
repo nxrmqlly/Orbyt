@@ -644,7 +644,6 @@ class SendToChannelSelect(discord.ui.ChannelSelect):
             else:
                 await interaction.response.edit_message(
                     f"{EMOJIS['no']} - You have permission to send embeds in {channel.mention}.",
-                    ephemeral=True,
                     view=None,
                 )
         except discord.HTTPException:
