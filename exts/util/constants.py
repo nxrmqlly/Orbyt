@@ -56,9 +56,9 @@ EMOJIS: Dict[str, str] = {
 }
 
 SECONDARY_COLOR = Color.from_str("#1f87a7")
-BG_COLOR = Color.from_str("#081927")
+BG_COLOR = Color.from_str("#0d051c")
 ACCENT_COLOR = Color.from_str("#d3d3d3")
-CONTRAST_COLOR = Color.from_str("#F0B232")
+CONTRAST_COLOR = Color.from_str("#755ae0")
 
 ASCII_TITLE = """
   .oooooo.             .o8                       .   

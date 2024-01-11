@@ -1067,11 +1067,11 @@ class Embed(commands.Cog):
         emb.set_author(
             name="<< Author Icon | Author Name",
             url="http://example.com/orbyt",
-            icon_url="https://i.imgur.com/JNMmc4Z.png",
+            icon_url="https://i.imgur.com/KmwxpHF.png",
         )
         emb.set_footer(
             text="<< Footer Icon | This is the footer",
-            icon_url="https://i.imgur.com/Vpkgtg0.png",
+            icon_url="https://i.imgur.com/V8xDSE5.png",
         )
         for i in range(1, 3):
             emb.add_field(
@@ -1080,8 +1080,8 @@ class Embed(commands.Cog):
         emb.add_field(
             name=f"Field 3", value=f"Field 3 Value\nIt's NOT Inline", inline=False
         )
-        emb.set_image(url="https://i.imgur.com/PIKTqHy.png")
-        emb.set_thumbnail(url="https://i.imgur.com/f4sXljr.png")
+        emb.set_image(url="https://i.imgur.com/EhtHWap.png")
+        emb.set_thumbnail(url="https://i.imgur.com/hq8nDF2.png")
 
         return emb
 
