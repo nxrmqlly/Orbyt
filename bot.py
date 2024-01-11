@@ -18,13 +18,13 @@
 """Boilerplate code for Bot's root functionalities"""
 
 import logging
-from sys import version
+import sys
 
 import discord
 import jishaku
+import asqlite
 from discord.ext import commands
 from termcolor import colored
-import asqlite
 
 from logging.handlers import RotatingFileHandler
 from exts.util.text_format import spaced_padding, CustomFormatter
@@ -140,7 +140,7 @@ class Orbyt(commands.AutoShardedBot):
             for tag, value in [
                 ("User", self.user),
                 ("ID", self.user.id),
-                ("Python", version),
+                ("Python", sys.version),
                 ("Discord.py", discord.__version__),
                 ("Jishaku", jishaku.__version__),
                 ("Guilds", len(self.guilds)),

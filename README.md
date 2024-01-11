@@ -43,11 +43,10 @@ To get started with Orbyt on your local machine:
 4. #### Bot Authorization:
    - Create a new Discord Application + Bot on the [Discord Developer Portal](https://discord.com/developers/applications).
    - Set your main bot token into `config.py`.
-   - If you are testing/debugging, set the `DEBUG_BOT_TOKEN`.
 
 5. #### Configure Debugging (Optional):
    - If testing/debugging, set `DEBUG` to `True` in the `config.py`.
-   - ⚠️ Set the `DEBUG_TOKEN` for the bot to function in debug mode.
+   - ⚠️ Set the `DEBUG_BOT_TOKEN` for the bot to function in debug mode.
 
 6. #### Invite the Bot:
    - Generate an invite link from the [Discord Developer Portal](https://discord.com/developers/applications) and invite the bot.
@@ -58,6 +57,9 @@ To get started with Orbyt on your local machine:
 ## Configuration
 
 Ensure to configure the `config.py` file with the following parameters:
+- `PROD_TOKEN` is your main bot token
+- `MYSTBIN_API_KEY` is your [mystb.in](https://msytb.in/) API Key
+- `DEBUG` & `DEBUG_BOT_TOKEN` For debugging (Optional)
 
 ```python
 # config.py
@@ -65,6 +67,8 @@ Ensure to configure the `config.py` file with the following parameters:
 ## ----- PRODUCTION RELATED ----- ##
 PROD_TOKEN = ""  # Main Discord Bot Token
 
+## ----- MYSTBIN RELATED ----- ##
+MYSTBIN_API_KEY = "" # Mystb.in API Key
 
 ## ----- DEBUG RELATED ----- ##
 DEBUG = False  # Debug Mode? (Optional) - If True then DEBUG_BOT_TOKEN must be set
@@ -86,5 +90,5 @@ I appreciate your contributions! Create a pull request for any improvements or c
 
 Copyright (c) 2023-present Ritam Das
 
-This project is licensed under the [GNU Affero General Public License v3.0 (AGPL-3.0)](https://www.gnu.org/licenses/agpl-3.0.en.html). See the [LICENSE](LICENSE) file for details.
+This project is licensed under the [GNU Affero General Public License v3.0 (AGPL-3.0)](https://www.gnu.org/licenses/agpl-3.0.en.html). See the [LICENSE](LICENSE) for details.
 

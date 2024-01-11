@@ -29,6 +29,7 @@ import copy
 from io import BytesIO
 
 import discord
+import mystbin
 from discord.ext import commands
 from discord.ui import TextInput
 from discord import app_commands, ChannelType
@@ -36,62 +37,10 @@ from discord.utils import MISSING
 from termcolor import cprint
 
 from bot import Orbyt
+from config import MYSTBIN_API_KEY
 from .util.views import BaseView, message_jump_button
-from .util.constants import CONTRAST_COLOR, EMOJIS
+from .util.constants import CONTRAST_COLOR, EMOJIS, HTTP_URL_REGEX
 from .util.text_format import truncate
-
-
-class URLModal(discord.ui.Modal):
-    def __init__(self, *, _embed: discord.Embed, parent_view: discord.ui.View) -> None:
-        self.embed = _embed
-
-        self.parent_view = parent_view
-
-        self.url.default = _embed.url
-
-        super().__init__(title="Edit URL Component", timeout=None)
-
-    url = TextInput(
-        label="Title URL",
-        placeholder="http://example.com",
-    )
-
-    async def on_submit(self, interaction: discord.Interaction) -> None:
-        embed_copy = copy.deepcopy(self.embed)
-
-        if not self.embed.title:
-            await interaction.response.send_message(
-                f"{EMOJIS['no']} - Embed must have a title.", ephemeral=True
-            )
-            return
-
-        self.embed.url = self.url.value
-
-        if len(self.embed) > 6000:
-            self.parent_view.embed = embed_copy
-            await interaction.response.send_message(
-                f"{EMOJIS['no']} - Embed too long; Exceeded 6000 characters.",
-                ephemeral=True,
-            )
-            return
-
-        self.parent_view.update_counters()
-        await interaction.response.edit_message(embed=self.embed, view=self.parent_view)
-
-    async def on_error(
-        self, interaction: discord.Interaction, error: Exception
-    ) -> None:
-        if isinstance(error, ValueError) or isinstance(
-            error, discord.errors.HTTPException
-        ):
-            await interaction.response.send_message(
-                f"{EMOJIS['no']} - Value Error. Invalid URL",
-                ephemeral=True,
-            )
-        else:
-            traceback.print_exception(
-                type(error), error, error.__traceback__, file=sys.stderr
-            )
 
 
 class EmbedModal(discord.ui.Modal):
@@ -185,9 +134,7 @@ class EmbedModal(discord.ui.Modal):
                 ephemeral=True,
             )
         else:
-            traceback.print_exception(
-                type(error), error, error.__traceback__, file=sys.stderr
-            )
+            raise error
 
 
 class AuthorModal(discord.ui.Modal):
@@ -251,9 +198,7 @@ class AuthorModal(discord.ui.Modal):
                 ephemeral=True,
             )
         else:
-            traceback.print_exception(
-                type(error), error, error.__traceback__, file=sys.stderr
-            )
+            raise error
 
 
 class FooterModal(discord.ui.Modal):
@@ -308,9 +253,58 @@ class FooterModal(discord.ui.Modal):
                 ephemeral=True,
             )
         else:
-            traceback.print_exception(
-                type(error), error, error.__traceback__, file=sys.stderr
+            raise error
+
+
+class URLModal(discord.ui.Modal):
+    def __init__(self, *, _embed: discord.Embed, parent_view: discord.ui.View) -> None:
+        self.embed = _embed
+
+        self.parent_view = parent_view
+
+        self.url.default = _embed.url
+
+        super().__init__(title="Edit URL Component", timeout=None)
+
+    url = TextInput(
+        label="Title URL",
+        placeholder="http://example.com",
+    )
+
+    async def on_submit(self, interaction: discord.Interaction) -> None:
+        embed_copy = copy.deepcopy(self.embed)
+
+        if not self.embed.title:
+            await interaction.response.send_message(
+                f"{EMOJIS['no']} - Embed must have a title.", ephemeral=True
             )
+            return
+
+        self.embed.url = self.url.value
+
+        if len(self.embed) > 6000:
+            self.parent_view.embed = embed_copy
+            await interaction.response.send_message(
+                f"{EMOJIS['no']} - Embed too long; Exceeded 6000 characters.",
+                ephemeral=True,
+            )
+            return
+
+        self.parent_view.update_counters()
+        await interaction.response.edit_message(embed=self.embed, view=self.parent_view)
+
+    async def on_error(
+        self, interaction: discord.Interaction, error: Exception
+    ) -> None:
+        if isinstance(error, ValueError) or isinstance(
+            error, discord.errors.HTTPException
+        ):
+            await interaction.response.send_message(
+                f"{EMOJIS['no']} - Value Error. Invalid URL",
+                ephemeral=True,
+            )
+        else:
+            raise error
 
 
 class AddFieldModal(discord.ui.Modal):
@@ -405,9 +399,7 @@ class AddFieldModal(discord.ui.Modal):
                 f"{error} {type(error)} {isinstance(error, discord.HTTPException)}",
                 "red",
             )
-            traceback.print_exception(
-                type(error), error, error.__traceback__, file=sys.stderr
-            )
+            raise error
 
 
 class DeleteFieldDropdown(discord.ui.Select):
@@ -565,9 +557,7 @@ class EditFieldModal(discord.ui.Modal):
                 view=None,
             )
         else:
-            traceback.print_exception(
-                type(error), error, error.__traceback__, file=sys.stderr
-            )
+            raise error
 
 
 class EditFieldDropdown(discord.ui.Select):
@@ -713,7 +703,97 @@ class SendViaWebhookModal(discord.ui.Modal):
                 f"{EMOJIS['no']} - Couldn't send the embed.",
                 ephemeral=True,
             )
-            traceback.print_exc()
+
+
+class ImportJSONModal(discord.ui.Modal):
+    def __init__(self, *, _embed: discord.Embed, parent_view: discord.ui.View):
+        self.embed = _embed
+        self.parent_view = parent_view
+
+        super().__init__(
+            title="Import JSON",
+        )
+
+    json_or_mystbin = discord.ui.TextInput(
+        label="JSON or Mystbin URL",
+        placeholder="Paste JSON or mystb.in link here.\n"
+        "If your JSON is too long, use https://mystb.in/ to upload it.\n",
+        required=True,
+        style=discord.TextStyle.paragraph,
+    )
+
+    async def get_mystb_file(self, paste_id: str) -> str:
+        headers = {
+            "Authorization": "Bearer " + MYSTBIN_API_KEY,
+        }
+        async with aiohttp.ClientSession() as session:
+            sesh = await session.get(
+                f"https://api.mystb.in/paste/{paste_id}", headers=headers
+            )
+            status_table = {
+                401: "Unauthorised",
+                404: "Not Found",
+                422: "Unprocessable Entity",
+            }
+            if sesh.status != 200:
+                raise ValueError(
+                    f"Unable to fetch from mystb.in, API Returned {sesh.status}: {status_table[sesh.status]}"
+                )
+
+        json_str = json.loads(await sesh.content.read())["files"][0]["content"]
+        return json_str
+
+    async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.defer()
+        if not re.fullmatch(HTTP_URL_REGEX, self.json_or_mystbin.value):
+            json_value = self.json_or_mystbin.value
+
+        else:
+            if not self.json_or_mystbin.value.startswith("https://mystb.in/"):
+                return await interaction.followup.send(
+                    content=f"{EMOJIS['no']} - Not a mystb.in URL",
+                    ephemeral=True,
+                )
+
+            json_value = await self.get_mystb_file(
+                self.json_or_mystbin.value.lstrip("https://mystb.in/")
+            )
+
+        to_dict = json.loads(
+            json_value,
+            parse_int=lambda x: int(x),
+            parse_float=lambda x: float(x),
+        )
+        embed = discord.Embed.from_dict(to_dict)
+
+        if len(embed) <= 0 or len(embed) > 6000:
+            raise ValueError("Embed length is not 0-6000 characters long.")
+
+        self.parent_view.embed = embed
+        self.parent_view.update_counters()
+
+        await interaction.edit_original_response(embed=embed, view=self.parent_view)
+        await interaction.followup.send(
+            content=f"{EMOJIS['yes']} - Embed imported from JSON",
+            ephemeral=True,
+        )
+
+    async def on_error(
+        self, interaction: discord.Interaction, error: Exception
+    ) -> None:
+        if isinstance(error, ValueError) or isinstance(
+            error, discord.errors.HTTPException
+        ):
+            await interaction.followup.send(
+                content=f"{EMOJIS['no']} - Error: {str(error)}", ephemeral=True
+            )
+        elif isinstance(error, json.JSONDecodeError):
+            await interaction.followup.send(
+                f"{EMOJIS['no']} - Invalid JSON.",
+                ephemeral=True,
+            )
+        else:
+            raise error
 
 
 class EmbedBuilderView(BaseView):
@@ -728,7 +808,7 @@ class EmbedBuilderView(BaseView):
         self.field_counter.label = f"{len(self.embed.fields)}/25 Fields"
 
     @discord.ui.button(
-        label="Basic:", style=discord.ButtonStyle.gray, disabled=True, row=0
+        label="Edit:", style=discord.ButtonStyle.gray, disabled=True, row=0
     )
     async def _basic_tag(
         self, interaction: discord.Interaction, button: discord.ui.Button
@@ -901,15 +981,24 @@ class EmbedBuilderView(BaseView):
     ):
         em1 = Embed.generate_help_embed()
         em2 = discord.Embed(
-            title="Fields",
-            description=f"{EMOJIS['white_plus']}: Add a Field\n"
-            f"{EMOJIS['white_minus']}: Delete a Field\n"
-            f"{EMOJIS['white_pencil']}: Edit a field (or reorder)",
             color=CONTRAST_COLOR,
+        )
+        em2.add_field(
+            name="Fields",
+            inline=False,
+            value=f"{EMOJIS['white_plus']} Add a Field\n"
+            f"{EMOJIS['white_minus']} Delete a Field\n"
+            f"{EMOJIS['white_pencil']} Edit a field (or reorder)",
+        )
+        em2.add_field(
+            name="JSON",
+            inline=False,
+            value=f"**Export JSON**: Export the embed to discord-valid JSON format.\n"
+            f"**Import JSON**: Import the embed from discord-valid JSON format.",
         )
         await interaction.response.send_message(embeds=[em1, em2], ephemeral=True)
 
-    @discord.ui.button(label="Export as JSON", style=discord.ButtonStyle.gray, row=3)
+    @discord.ui.button(label="Export JSON", style=discord.ButtonStyle.gray, row=3)
     async def export_json(
         self, interaction: discord.Interaction, button: discord.ui.Button
     ):
@@ -923,6 +1012,14 @@ class EmbedBuilderView(BaseView):
         file = discord.File(fp=stream, filename="embed.json")
         await interaction.response.send_message(
             content="Here's your Embed as a JSON file:", file=file, ephemeral=True
+        )
+
+    @discord.ui.button(label="Import JSON", style=discord.ButtonStyle.gray, row=3)
+    async def import_json(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ):
+        await interaction.response.send_modal(
+            ImportJSONModal(_embed=self.embed, parent_view=self)
         )
 
     @discord.ui.button(emoji=EMOJIS["white_x"], style=discord.ButtonStyle.red, row=3)
