@@ -20,8 +20,6 @@
 For Custom Embeds
 """
 
-import traceback
-import sys
 import aiohttp
 import re
 import json
@@ -29,7 +27,6 @@ import copy
 from io import BytesIO
 
 import discord
-import mystbin
 from discord.ext import commands
 from discord.ui import TextInput
 from discord import app_commands, ChannelType

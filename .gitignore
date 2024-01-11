@@ -1,7 +1,6 @@
 *.log
 config.py
 *.dev.*
-__pycache__/
 *.pyc
 *.db
 *.db-*
@@ -11,3 +10,4 @@ __pycache__/
 .venv/
 .vscode/
 .mypy_cache/
+__pycache__/
