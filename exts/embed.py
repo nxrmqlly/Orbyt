@@ -636,7 +636,6 @@ class SendToChannelSelect(discord.ui.ChannelSelect):
         except discord.HTTPException:
             await interaction.response.edit_message(
                 f"{EMOJIS['no']} - Couldn't send the embed in {channel.mention}.",
-                ephemeral=True,
                 view=None,
             )
 
