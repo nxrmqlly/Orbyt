@@ -32,7 +32,7 @@ class GlobalError(commands.Cog):
     def __init__(self, bot: Orbyt) -> None:
         self.bot = bot
 
-    def cog_load(self):
+    def cog_load(self) -> None:
         tree = self.bot.tree
         self._old_tree_error = tree.on_error
         tree.on_error = self.on_app_command_error
@@ -40,6 +40,24 @@ class GlobalError(commands.Cog):
     def cog_unload(self):
         tree = self.bot.tree
         tree.on_error = self._old_tree_error
+
+    @commands.Cog.listener("on_command_error")
+    async def on_command_error(
+        self, ctx: commands.Context, error: commands.CommandError
+    ):
+        if isinstance(error, commands.CommandNotFound):
+            pass
+        elif isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send_help(ctx.command)
+        elif isinstance(error, commands.BadArgument):
+            await ctx.send_help(ctx.command)
+        elif isinstance(error, commands.NotOwner):
+            await ctx.send(f"{EMOJIS['no']} - Only developers can use this command.")
+        else:
+            await ctx.send(
+                f"⚠️ - Unexpected error, report to developers: {self.bot._codeblock}py\n{error}\n{self.bot._codeblock}"
+            )
+            raise error
 
     async def on_app_command_error(
         self, interaction: discord.Interaction, error: app_commands.AppCommandError
