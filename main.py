@@ -23,7 +23,7 @@ __copyright__ = "Copyright (C) 2023-present Ritam Das"
 __title__ = "Orbyt"
 __author__ = "Nxrmqlly (Ritam Das)"
 __license__ = "AGPL v3"
-__version__ = "1.4.2"
+__version__ = "1.4.3"
 
 import os
 from asyncio import run
