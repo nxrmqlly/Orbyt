@@ -55,7 +55,7 @@ class GlobalError(commands.Cog):
             await ctx.send(f"{EMOJIS['no']} - Only developers can use this command.")
         else:
             await ctx.send(
-                f"⚠️ - Unexpected error, report to developers: {self.bot._codeblock}py\n{error}\n{self.bot._codeblock}"
+                f"⚠️ - Unexpected error, report to developers! {type(error)}: ```py\n{str(error)}\n```"
             )
             raise error
 
@@ -64,17 +64,18 @@ class GlobalError(commands.Cog):
     ):
         if isinstance(error, app_commands.CommandOnCooldown):
             await interaction.response.send_message(
-                f"⏰ - Command is on cooldown!\n>>> {str(error)}", ephemeral=True
+                f"⏰ - Command is on cooldown!\n```py\n{str(error)}\n```",
+                ephemeral=True,
             )
         elif isinstance(error, app_commands.MissingPermissions):
             await interaction.response.send_message(
-                f"{EMOJIS['no']} - You are missing permissions!\n>>> {str(error)}",
+                f"{EMOJIS['no']} - You are missing permissions!\n```py\n{str(error)}\n```",
                 ephemeral=True,
             )
 
         elif isinstance(error, app_commands.BotMissingPermissions):
             await interaction.response.send_message(
-                f"{EMOJIS['no']} - I am missing permissions!\n>>> {str(error)}",
+                f"{EMOJIS['no']} - I am missing permissions!\n```py\n{str(error)}\n```",
                 ephemeral=True,
             )
 
@@ -86,18 +87,18 @@ class GlobalError(commands.Cog):
 
         elif isinstance(error, app_commands.MissingAnyRole):
             await interaction.response.send_message(
-                f"{EMOJIS['no']} - You are missing required roles!\n>>> {str(error)}",
+                f"{EMOJIS['no']} - You are missing required roles!\n```py\n{str(error)}\n```",
             )
 
         elif isinstance(error, app_commands.CheckFailure):
             await interaction.response.send_message(
-                f"{EMOJIS['no']} - Check failed! (Suggested to report to developers)\n>>> {str(error)}",
+                f"{EMOJIS['no']} - Check failed! (Suggested to report to developers)\n```py\n{str(error)}\n```",
                 ephemeral=True,
             )
 
         else:
             await interaction.response.send_message(
-                f"⚠️ - Unknown Error, please report to developers!\n>>>>> ```py\n{str(error)}\n```",
+                f"⚠️ - Unknown Error, please report to developers! {type(error)}:\n```py\n{str(error)}\n```",
                 ephemeral=True,
             )
             raise error
