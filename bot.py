@@ -46,6 +46,7 @@ class Orbyt(commands.AutoShardedBot):
 
     def __init__(self, *args, **kwargs):
         intents = discord.Intents.default()
+        intents.members = True
 
         super().__init__(
             command_prefix=commands.when_mentioned,

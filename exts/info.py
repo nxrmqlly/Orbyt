@@ -71,10 +71,10 @@ class Info(commands.Cog):
             "Verification": f"{str(guild.verification_level).replace('_', ' ').replace('none', 'no').title()} Verification Level",
         }
         counts = {
-            "Roles": f"{len(guild.roles)}`",
-            "Channels": f"{len(guild.channels)}`",
-            "Emojis": f"{len(guild.emojis)}`",
-            "Stickers": f"{len(guild.stickers)}`",
+            "Roles": f"`{len(guild.roles)}`",
+            "Channels": f"`{len(guild.channels)}`",
+            "Emojis": f"`{len(guild.emojis)}`",
+            "Stickers": f"`{len(guild.stickers)}`",
         }
         membertypes = {
             "Humans": f"`{len([m for m in guild.members if not m.bot])}`",
@@ -149,7 +149,7 @@ class Info(commands.Cog):
                 if not user.display_name == user.name
                 else EMOJIS["no"]
             ),
-            "Discriminator": "`#{user.discriminator}`" or "None",
+            "Discriminator": f"`#{user.discriminator}`" or "None",
             "Is Owner?": EMOJIS["yes" if interaction.guild.owner == user else "no"],
             "Is Bot?": EMOJIS["yes" if user.bot else "no"],
         }
