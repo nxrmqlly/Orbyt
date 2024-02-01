@@ -55,7 +55,7 @@ class GlobalError(commands.Cog):
             await ctx.send(f"{EMOJIS['no']} - Only developers can use this command.")
         else:
             await ctx.send(
-                f"⚠️ - Unexpected error, report to developers! {type(error)}: ```py\n{str(error)}\n```"
+                f"⚠️ - Unexpected error, report to developers: ```py\n{str(error)}\n```"
             )
             raise error
 
@@ -98,7 +98,7 @@ class GlobalError(commands.Cog):
 
         else:
             await interaction.response.send_message(
-                f"⚠️ - Unknown Error, please report to developers! {type(error)}:\n```py\n{str(error)}\n```",
+                f"⚠️ - Unknown Error, please report to developers:\n```py\n{str(error)}\n```",
                 ephemeral=True,
             )
             raise error

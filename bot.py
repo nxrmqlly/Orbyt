@@ -45,11 +45,13 @@ class Orbyt(commands.AutoShardedBot):
     """Base Class for the bot"""
 
     def __init__(self, *args, **kwargs):
+        intents = discord.Intents.default()
+
         super().__init__(
             command_prefix=commands.when_mentioned,
             case_insensitive=True,
             strip_after_prefix=True,
-            intents=discord.Intents.default(),
+            intents=discord.Intents.all() if DEBUG else intents,
             owner_id=767115163127906334,
             activity=discord.Activity(
                 type=discord.ActivityType.custom,

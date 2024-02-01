@@ -43,7 +43,7 @@ class Info(commands.Cog):
         before = time.perf_counter()
         embed = discord.Embed(
             title="Pong!",
-            description=f"""<:network:1080529982520037446> **API Latency:** {round(self.bot.latency * 1000)}ms""",
+            description=f"""{EMOJIS['network']} **API Latency:** {round(self.bot.latency * 1000)}ms""",
             color=discord.Color.green(),
         )
         await interaction.response.send_message(embed=embed)
@@ -52,7 +52,7 @@ class Info(commands.Cog):
 
         embed.description = (
             embed.description
-            + f"\n<:network:1080529982520037446> **Round Trip Latency:** {round((after - before) * 1000)}ms"
+            + f"\n{EMOJIS['network']} **Round Trip Latency:** {round((after - before) * 1000)}ms"
         )
 
         await interaction.edit_original_response(embed=embed)
@@ -66,20 +66,20 @@ class Info(commands.Cog):
         guild = interaction.guild
 
         gen_info = {
-            "ID": guild.id,
+            "ID": f"`{guild.id}`",
             "Created": f"{discord.utils.format_dt(guild.created_at, 'f')} ({discord.utils.format_dt(guild.created_at, 'R')})",
             "Verification": f"{str(guild.verification_level).replace('_', ' ').replace('none', 'no').title()} Verification Level",
         }
         counts = {
-            "Roles": len(guild.roles),
-            "Channels": len(guild.channels),
-            "Emojis": len(guild.emojis),
-            "Stickers": len(guild.stickers),
+            "Roles": f"{len(guild.roles)}`",
+            "Channels": f"{len(guild.channels)}`",
+            "Emojis": f"{len(guild.emojis)}`",
+            "Stickers": f"{len(guild.stickers)}`",
         }
         membertypes = {
-            "Humans": len([m for m in guild.members if not m.bot]),
-            "Bots": len([m for m in guild.members if m.bot]),
-            "Total": len(guild.members),
+            "Humans": f"`{len([m for m in guild.members if not m.bot])}`",
+            "Bots": f"`{len([m for m in guild.members if m.bot])}`",
+            "Total": f"`{len(guild.members)}`",
         }
 
         embed = (
@@ -104,7 +104,7 @@ class Info(commands.Cog):
             )
             .add_field(
                 name=f"{EMOJIS['owner_icon']} Owner",
-                value=guild.owner.mention + "\n" + f"**ID:** {guild.owner_id}",
+                value=f"<@{guild.owner_id}>" + "\n" + f"**ID:** `{guild.owner_id}`",
             )
         )
         if guild.icon:
@@ -142,12 +142,14 @@ class Info(commands.Cog):
             user = interaction.user
 
         basic_info = {
-            "ID": user.id,
+            "ID": f"`{user.id}`",
             "Username": user.name,
-            "Display Name": user.display_name
-            if not user.display_name == user.name
-            else EMOJIS["no"],
-            "Discriminator": user.discriminator or "None",
+            "Display Name": (
+                user.display_name
+                if not user.display_name == user.name
+                else EMOJIS["no"]
+            ),
+            "Discriminator": "`#{user.discriminator}`" or "None",
             "Is Owner?": EMOJIS["yes" if interaction.guild.owner == user else "no"],
             "Is Bot?": EMOJIS["yes" if user.bot else "no"],
         }
