@@ -309,7 +309,7 @@ class Tags(commands.GroupCog, name="tag"):
                 )
 
             view = TagPages(
-                clamp_pages=False,
+                clamp_pages=True,
                 timeout=60,
                 entries=data,
                 target=interaction,
